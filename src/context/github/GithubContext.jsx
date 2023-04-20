@@ -9,12 +9,16 @@ const GithubContext = createContext();
 export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
-    loading: true,
-  }
+    loading: false,
+  };
 
-const [state, dispatch] = useReducer(githubReducer, initialState)
-
+  const [state, dispatch] = useReducer(githubReducer, initialState);
+  //set loading
+  const setLoading = () => dispatch({ type: "SET_LOADING" });
+ 
+  //get initial users (testing purposes)
   const fetchUsers = async () => {
+     setLoading();
     try {
       const response = await fetch("https://api.github.com/users", {
         headers: {
@@ -30,11 +34,12 @@ const [state, dispatch] = useReducer(githubReducer, initialState)
       dispatch({
         type: "GET_USERS",
         payload: data,
-      })
+      });
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <GithubContext.Provider
       value={{
