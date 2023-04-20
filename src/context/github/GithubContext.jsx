@@ -16,24 +16,31 @@ export const GithubProvider = ({ children }) => {
   //set loading
   const setLoading = () => dispatch({ type: "SET_LOADING" });
  
-  //get initial users (testing purposes)
-  const fetchUsers = async () => {
+  //get search results
+  const searchUsers = async (text) => {
      setLoading();
+
+     const params = new URLSearchParams ({
+      q: text
+     })
     try {
-      const response = await fetch("https://api.github.com/users", {
-        headers: {
-          Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
-        },
-      });
+      const response = await fetch(
+        `https://api.github.com/search/users?${params}`,
+        {
+          headers: {
+            Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(response.statusText);
       }
 
-      const data = await response.json();
+      const {items} = await response.json();
       dispatch({
         type: "GET_USERS",
-        payload: data,
+        payload: items,
       });
     } catch (error) {
       console.log(error);
@@ -45,7 +52,7 @@ export const GithubProvider = ({ children }) => {
       value={{
         users: state.users,
         loading: state.loading,
-        fetchUsers,
+        searchUsers,
       }}
     >
       {children}
