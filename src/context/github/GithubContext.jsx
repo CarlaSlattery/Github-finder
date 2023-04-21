@@ -9,6 +9,7 @@ const GithubContext = createContext();
 export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
+    user: {},
     loading: false,
   };
 
@@ -47,6 +48,41 @@ export const GithubProvider = ({ children }) => {
     }
   };
 
+  //get single user
+
+  const getUser = async (login) => {
+    setLoading();
+
+   
+    try {
+      const response = await fetch(
+        `https://api.github.com/users/${login}`,
+        {
+          headers: {
+            Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+          },
+        }
+      );
+
+      if (response.status === 404){
+        window.location ="/notfound"
+      }
+
+       else if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const data = await response.json();
+      dispatch({
+        type: "GET_USER",
+        payload: data,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
   //clear users
   const clearUsers = () => dispatch({type: "CLEAR_USERS"})
 
@@ -55,7 +91,9 @@ export const GithubProvider = ({ children }) => {
       value={{
         users: state.users,
         loading: state.loading,
+        user: state.user,
         searchUsers,
+        getUser,
         clearUsers,
       }}
     >
