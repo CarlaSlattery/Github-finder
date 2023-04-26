@@ -10,6 +10,7 @@ export const GithubProvider = ({ children }) => {
   const initialState = {
     users: [],
     user: {},
+    repos: [],
     loading: false,
   };
 
@@ -81,6 +82,38 @@ export const GithubProvider = ({ children }) => {
       console.log(error);
     }
   };
+// get user repos
+  const getUserRepos = async (login) => {
+    setLoading();
+
+    const params = new URLSearchParams({
+      sort: 'created',
+      per_page: 10,
+    });
+    
+    try {
+      const response = await fetch(
+        `https://api.github.com/users/${login}/repos?${params}`,
+        {
+          headers: {
+            Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      const data = await response.json();
+      dispatch({
+        type: "GET_REPOS",
+        payload: data,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
 
   //clear users
@@ -92,9 +125,11 @@ export const GithubProvider = ({ children }) => {
         users: state.users,
         loading: state.loading,
         user: state.user,
+        repos: state.repos,
         searchUsers,
         getUser,
         clearUsers,
+        getUserRepos,
       }}
     >
       {children}

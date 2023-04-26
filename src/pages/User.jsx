@@ -3,15 +3,18 @@ import { useEffect, useContext } from "react";
 
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
+import RepoList from "../components/repos/RepoList";
 import GithubContext, { GithubProvider } from "../context/github/GithubContext";
 
+
 function User() {
-  const { getUser, user } = useContext(GithubContext);
+  const { getUser, user, getUserRepos, repos, } = useContext(GithubContext);
 
   const params = useParams();
 
   useEffect(() => {
     getUser(params.login);
+    getUserRepos(params.login);
   }, []);
 
   const {
@@ -145,6 +148,7 @@ function User() {
             </div>
           </div>
         </div>
+        <RepoList repos={repos} />
       </div>
     </>
   );
