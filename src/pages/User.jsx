@@ -1,4 +1,4 @@
-import {FaCode, FaStore, FaUserFriends, FaUsers} from "react-icons/fa";
+import {FaCode, FaUserFriends, FaUsers} from "react-icons/fa";
 import { useEffect, useContext } from "react";
 import Spinner from "../components/Spinner";
 import { useParams } from "react-router-dom";
