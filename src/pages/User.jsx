@@ -1,6 +1,6 @@
 import {FaCode, FaStore, FaUserFriends, FaUsers} from "react-icons/fa";
 import { useEffect, useContext } from "react";
-
+import Spinner from "../components/Spinner";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import RepoList from "../components/repos/RepoList";
@@ -9,7 +9,7 @@ import { getUserAndRepos} from "../context/github/GithubActions";
 
 
 function User() {
-  const {  user, repos, dispatch } = useContext(GithubContext);
+  const {  user, repos, loading, dispatch } = useContext(GithubContext);
 
   const params = useParams();
 
@@ -40,8 +40,11 @@ function User() {
     following,
     public_repos,
     company,
-    email,
-  } = user;
+  } = user
+
+  if (loading) {
+    return <Spinner />
+  }
   return (
     <>
       <div className="w-full mx-auto lg:w-10/12">

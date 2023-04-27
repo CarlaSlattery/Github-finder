@@ -1,5 +1,8 @@
+import spinner from "../assets/VZvw.gif"
 function Spinner() {
-  return <div>Spinner to go here.</div>;
+  return <div className="mt=20">
+    <img width={180} className="text-center mx-auto" src={spinner} alt="Loading..." />
+    </div>;
 }
 
 export default Spinner;
