@@ -17,59 +17,24 @@ export const GithubProvider = ({ children }) => {
   const [state, dispatch] = useReducer(githubReducer, initialState);
   //set loading
   const setLoading = () => dispatch({ type: "SET_LOADING" });
- 
-  //get search results
-  const searchUsers = async (text) => {
-     setLoading();
 
-     const params = new URLSearchParams ({
-      q: text
-     })
-    try {
-      const response = await fetch(
-        `https://api.github.com/search/users?${params}`,
-        {
-          headers: {
-            Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(response.statusText);
-      }
-
-      const {items} = await response.json();
-      dispatch({
-        type: "GET_USERS",
-        payload: items,
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //GET USERS
 
   //get single user
 
   const getUser = async (login) => {
     setLoading();
 
-   
     try {
-      const response = await fetch(
-        `https://api.github.com/users/${login}`,
-        {
-          headers: {
-            Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
-          },
-        }
-      );
+      const response = await fetch(`https://api.github.com/users/${login}`, {
+        headers: {
+          Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+        },
+      });
 
-      if (response.status === 404){
-        window.location ="/notfound"
-      }
-
-       else if (!response.ok) {
+      if (response.status === 404) {
+        window.location = "/notfound";
+      } else if (!response.ok) {
         throw new Error(response.statusText);
       }
 
@@ -82,15 +47,15 @@ export const GithubProvider = ({ children }) => {
       console.log(error);
     }
   };
-// get user repos
+  // get user repos
   const getUserRepos = async (login) => {
     setLoading();
 
     const params = new URLSearchParams({
-      sort: 'created',
+      sort: "created",
       per_page: 10,
     });
-    
+
     try {
       const response = await fetch(
         `https://api.github.com/users/${login}/repos?${params}`,
@@ -115,18 +80,15 @@ export const GithubProvider = ({ children }) => {
     }
   };
 
-
   //clear users
-  const clearUsers = () => dispatch({type: "CLEAR_USERS"})
+  const clearUsers = () => dispatch({ type: "CLEAR_USERS" });
 
   return (
     <GithubContext.Provider
       value={{
-        users: state.users,
-        loading: state.loading,
-        user: state.user,
-        repos: state.repos,
-        searchUsers,
+        ...state,
+        dispatch,
+
         getUser,
         clearUsers,
         getUserRepos,
